@@ -11,7 +11,7 @@ class Vehicle extends Entity {
 	}
 
 	/**
-	 * Decide which implementation to execute This must be done manually by
+	 * Decide which implementation to execute - This must be done manually by
 	 * commenting out the opposite implementation call
 	 * 
 	 * @param f
@@ -27,7 +27,7 @@ class Vehicle extends Entity {
 	}
 
 	/**
-	 * Execute the collaborative implementation Drop crumbs to help other agents
+	 * Execute the collaborative implementation - Drop crumbs to help other agents
 	 * find their way to rock clusters
 	 * 
 	 * @param f
@@ -92,8 +92,8 @@ class Vehicle extends Entity {
 	}
 
 	/**
-	 * Move away from the mothership By detecting the signal values of adjacent
-	 * locations And moving to the lowest value
+	 * Move away from the mothership, by detecting the signal values of adjacent
+	 * locations and moving to the lowest value
 	 * 
 	 * @param f
 	 *            Instance of class Field
@@ -159,8 +159,8 @@ class Vehicle extends Entity {
 	}
 
 	/**
-	 * Move towards the mothership By detecting signal values of adjacent locations
-	 * And moving to highest value
+	 * Move towards the mothership, by detecting signal values of adjacent locations
+	 * and moving to highest value
 	 * 
 	 * @param f
 	 *            Instance of class Field
@@ -204,7 +204,7 @@ class Vehicle extends Entity {
 	}
 
 	/**
-	 * Remove the rock sample from the location Add rock sample to ArrayList
+	 * Remove the rock sample from the location and add rock sample to ArrayList
 	 * variable
 	 * 
 	 * @param f
