@@ -27,6 +27,37 @@ class Vehicle extends Entity {
 	}
 
 	/**
+	 * Execute the simple implementation
+	 * 
+	 * @param f
+	 *            Instance of class Field
+	 * @param m
+	 *            Instance of class Mothership
+	 * @param rocksCollected
+	 *            ArrayList containing the rocks this vehicle is carrying
+	 */
+	public void actSimple(Field f, Mothership m, ArrayList<Rock> rocksCollected) {
+
+		if (carryingSample) {
+			if (findAdjacentMothership(f) != null) {
+				// if carrying a sample and at the base then drop sample (1)
+				dropSample(rocksCollected);
+			} else {
+				// if carrying a sample and not at the base then travel up gradient (2)
+				moveUpGradient(f);
+			}
+		} else {
+			if (detectSample(f) != null) {
+				// if detect a sample then pick sample (3)
+				pickUpSample(f, detectSample(f), rocksCollected);
+			} else {
+				// if true then move randomly (4)
+				moveRandomly(f);
+			}
+		}
+	}
+
+	/**
 	 * Execute the collaborative implementation - Drop crumbs to help other agents
 	 * find their way to rock clusters
 	 * 
@@ -38,22 +69,27 @@ class Vehicle extends Entity {
 	 *            ArrayList containing the rocks this vehicle is carrying
 	 */
 	public void actCollaborative(Field f, Mothership m, ArrayList<Rock> rocksCollected) {
-
 		if (carryingSample) {
 			if (findAdjacentMothership(f) != null) {
+				// if carrying a sample and at the base then drop sample (1)
 				dropSample(rocksCollected);
 			} else {
+				// if carrying a sample and not at the base then drop two crumbs and travel up
+				// gradient (5)
 				dropCrumbs(f);
 				moveUpGradient(f);
 			}
 		} else {
 			if (detectSample(f) != null) {
+				// if detect a sample then pick sample (3)
 				pickUpSample(f, detectSample(f), rocksCollected);
 			} else {
 				if (senseCrumbs(f)) {
+					// if sense crumbs then pick up one crumb and travel down gradient (6)
 					pickUpCrumb(f);
 					moveDownGradient(f);
 				} else {
+					// if true then move randomly (4)
 					moveRandomly(f);
 				}
 			}
@@ -101,15 +137,17 @@ class Vehicle extends Entity {
 	private void moveDownGradient(Field f) {
 		ArrayList<Location> adjacentLocations = f.getAllAdjacentLocations(this.getLocation());
 
-		// Find adjacent empty location with highest signal strength
-		double currentMin = 9999;
-		Location minSignalStrengthAdjacent = f.freeAdjacentLocation(this.getLocation());
+		// Find adjacent empty location with lowest signal strength
+		{
+			double currentMin = 9999;
+			Location minSignalStrengthAdjacent = f.freeAdjacentLocation(this.getLocation());
 
-		for (Location adjacent : adjacentLocations) {
-			if (f.getObjectAt(adjacent) == null) {
-				if (f.getSignalStrength(adjacent) < currentMin) {
-					currentMin = f.getSignalStrength(adjacent);
-					minSignalStrengthAdjacent = adjacent;
+			for (Location adjacent : adjacentLocations) {
+				if (f.getObjectAt(adjacent) == null) {
+					if (f.getSignalStrength(adjacent) < currentMin) {
+						currentMin = f.getSignalStrength(adjacent);
+						minSignalStrengthAdjacent = adjacent;
+					}
 				}
 			}
 
@@ -120,41 +158,14 @@ class Vehicle extends Entity {
 	}
 
 	/**
-	 * Execute the simple implementation
-	 * 
-	 * @param f
-	 *            Instance of class Field
-	 * @param m
-	 *            Instance of class Mothership
-	 * @param rocksCollected
-	 *            ArrayList containing the rocks this vehicle is carrying
-	 */
-	public void actSimple(Field f, Mothership m, ArrayList<Rock> rocksCollected) {
-
-		if (carryingSample) {
-			if (findAdjacentMothership(f) != null) {
-				dropSample(rocksCollected);
-			} else {
-				moveUpGradient(f);
-			}
-		} else {
-			if (detectSample(f) != null) {
-				pickUpSample(f, detectSample(f), rocksCollected);
-			} else {
-				moveRandomly(f);
-			}
-		}
-	}
-
-	/**
-	 * Drop the sample at the mothership
+	 * Drop the sample at the mothership. I couldn't find anywhere to 'store' the
+	 * rock once the rover was no longer carrying it, so it's just deleted.
 	 * 
 	 * @param rocksCollected
 	 *            ArrayList containing the rocks this vehicle is carrying
 	 */
 	private void dropSample(ArrayList<Rock> rocksCollected) {
 		rocksCollected.clear();
-		// Couldn't find a global counter/variable to store rocks in mothership?
 		carryingSample = false;
 	}
 
@@ -168,14 +179,17 @@ class Vehicle extends Entity {
 	private void moveUpGradient(Field f) {
 		ArrayList<Location> adjacentLocations = f.getAllAdjacentLocations(this.getLocation());
 
-		double currentMax = 0;
-		Location maxSignalStrengthAdjacent = f.freeAdjacentLocation(this.getLocation());
+		// Find adjacent empty location with lowest signal strength
+		{
+			double currentMax = 0;
+			Location maxSignalStrengthAdjacent = f.freeAdjacentLocation(this.getLocation());
 
-		for (Location adjacent : adjacentLocations) {
-			if (f.getObjectAt(adjacent) == null) {
-				if (f.getSignalStrength(adjacent) > currentMax) {
-					currentMax = f.getSignalStrength(adjacent);
-					maxSignalStrengthAdjacent = adjacent;
+			for (Location adjacent : adjacentLocations) {
+				if (f.getObjectAt(adjacent) == null) {
+					if (f.getSignalStrength(adjacent) > currentMax) {
+						currentMax = f.getSignalStrength(adjacent);
+						maxSignalStrengthAdjacent = adjacent;
+					}
 				}
 			}
 

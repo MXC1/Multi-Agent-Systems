@@ -90,6 +90,9 @@ public class Simulator {
 	 */
 	public void simulateOneStep() {
 
+		// Reduce number of crumbs in each location with crumbs in by 1
+		// Every 1000 steps
+		// This helps to reduce crumbs that lead to non-existent clusters
 		if (step % 1000 == 0) {
 			field.reduceCrumbs();
 		}
